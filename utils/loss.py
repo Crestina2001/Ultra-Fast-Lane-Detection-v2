@@ -4,6 +4,7 @@ import torch.nn.functional as F
 
 import numpy as np
 
+# Online Hard Example Mining (OHEM)
 class OhemCELoss(nn.Module):
     def __init__(self, thresh, n_min, ignore_lb=255, *args, **kwargs):
         super(OhemCELoss, self).__init__()
