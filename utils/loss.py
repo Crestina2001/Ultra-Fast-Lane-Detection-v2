@@ -5,6 +5,12 @@ import torch.nn.functional as F
 import numpy as np
 
 # Online Hard Example Mining (OHEM)
+'''
+n_min: a minimum number of hard examples
+this class implements a version of cross-entropy loss that focuses on the hardest examples. 
+It either selects the examples with loss higher than a certain threshold or the n_min examples with the highest loss, 
+whichever group is larger. 
+'''
 class OhemCELoss(nn.Module):
     def __init__(self, thresh, n_min, ignore_lb=255, *args, **kwargs):
         super(OhemCELoss, self).__init__()
@@ -23,6 +29,12 @@ class OhemCELoss(nn.Module):
             loss = loss[:self.n_min]
         return torch.mean(loss)
 
+'''
+pred is a 4D tensor with shape (N, C, H, W), where N is the batch size, C is the number of classes, 
+and H and W are the height and width of the input images
+target is a 3D tensor with shape (N, H, W), 
+where each element is the class label of the corresponding pixel in the input images.
+'''
 def soft_nll(pred, target, ignore_index = -1):
     C = pred.shape[1]
     invalid_target_index = target==ignore_index

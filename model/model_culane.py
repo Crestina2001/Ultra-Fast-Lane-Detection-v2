@@ -54,8 +54,14 @@ class parsingNet(torch.nn.Module):
         fea = fea.view(-1, self.input_dim)
         out = self.cls(fea)
 
-        pred_dict = {'loc_row': out[:,:self.dim1].view(-1,self.num_grid_row, self.num_cls_row, self.num_lane_on_row), 
+        pred_dict = {
+                # represents the predicted locations of lanes along the rows of the input image
+                # self.num_grid_row: the number of grid cells along the rows, which is 200
+                # self.num_cls_row: the number of the classes(locations in each line), which is 72
+                # self.num_lane_on_row: the number of lanes on each row, which is 4
+                'loc_row': out[:,:self.dim1].view(-1,self.num_grid_row, self.num_cls_row, self.num_lane_on_row),
                 'loc_col': out[:,self.dim1:self.dim1+self.dim2].view(-1, self.num_grid_col, self.num_cls_col, self.num_lane_on_col),
+                # This tensor represents the existence of lanes along the rows of the input image.
                 'exist_row': out[:,self.dim1+self.dim2:self.dim1+self.dim2+self.dim3].view(-1, 2, self.num_cls_row, self.num_lane_on_row), 
                 'exist_col': out[:,-self.dim4:].view(-1, 2, self.num_cls_col, self.num_lane_on_col)}
         if self.use_aux:
